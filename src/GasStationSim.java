@@ -16,6 +16,8 @@ public class GasStationSim{
 	private VehicleTank vehicleTank;
 	private int maxFillVolume;
 	private FuelType fuelType;
+	private double costForFill;
+	private DecimalFormat df = new DecimalFormat("#0.00");
 	
 	public static void main(String[] args){
 		
@@ -24,13 +26,6 @@ public class GasStationSim{
 		gasStationSim.createNewVehicle();
 		gasStationSim.createNewReservoir();
 		gasStationSim.howMuchToFill();
-
-
-		//TODO: Start filling sequence
-		//TODO: fill up 1litre at a time
-		//TODO: stop if, reservoir is empty, car is full or money amount has been reached
-		//TODO: direct driver to pay amount or calculate amount first
-		//TODO: end
 		
 	}
 	
@@ -41,14 +36,14 @@ public class GasStationSim{
 		vehicleType = vehicleArray[rand.nextInt(vehicleArray.length)]; 																
 		vehicleTank = new VehicleTank(vehicleType);																		
 		System.out.println("\nYou are driving a " + vehicleType.lowerCaseName() + " that has a tank capacity of " + vehicleTank.getTankFuelCapacity() + " litres."); 	
-		System.out.println("You currently have " + vehicleTank.getFuelInTank() + " litres of petrol in your " + vehicleType.lowerCaseName());
+		System.out.println("You currently have " + vehicleTank.getFuelInTank() + " litres of petrol in your " + vehicleType.lowerCaseName() + "\n");
 		
 	}
 	
 	private void createNewReservoir(){
 		
 		reservoirTank = new ReservoirTank(RESERVOIR_CAPACITY);
-		System.out.println("There is currently " + reservoirTank.getFuelInTank() + " litres of petrol in the reservoir");
+		System.out.println("There is currently " + reservoirTank.getFuelInTank() + " litres of petrol in the reservoir\n");
 		
 		while(reservoirTank.isTankEmpty()){
 
@@ -72,7 +67,7 @@ public class GasStationSim{
 			String s = movePump.next().toLowerCase();
 			
 			while(!s.equals("y") && !s.equals("n")){
-				System.out.println("Please answer Y or N....");
+				System.out.println("\nPlease answer Y or N....");
 				s = movePump.next().toLowerCase();
 			}
 			
@@ -96,12 +91,11 @@ public class GasStationSim{
 	private void howMuchToFill(){
 		
 		fuelType = getFuelType();
-		double costToFillToTop = vehicleTank.costToFill(fuelType, maxFillVolume);
-		DecimalFormat df = new DecimalFormat("#0.00"); 
-		System.out.println("Cost per litre, of " + fuelType.name().toLowerCase() + ", is \u00A3" + df.format(fuelType.getCostPerLitre()) + ". It will cost \u00A3" + df.format(costToFillToTop) + " for " + maxFillVolume + " litres.");
+		costForFill = vehicleTank.costToFill(fuelType, maxFillVolume);
+		System.out.println("Cost per litre, of " + fuelType.name().toLowerCase() + ", is \u00A3" + df.format(fuelType.getCostPerLitre()) + ". It will cost \u00A3" + df.format(costForFill) + " for " + maxFillVolume + " litres.");
 		
 		Scanner fillAmount = new Scanner(System.in);
-		System.out.println("Do you want to fill up (Y/N)");
+		System.out.println("Do you want to fill up completely? (Y/N)");
 		String s = fillAmount.next().toLowerCase();
 		
 		while(!s.equals("y") && !s.equals("n")){
@@ -110,13 +104,15 @@ public class GasStationSim{
 		}
 		
 		if (s.equals("y")){
-			System.out.println("Filling....");
+			
+			startFilling(maxFillVolume);
+			
 		} else {	
 			
 			double d;
 			
 			do{
-				System.out.println("Enter amount in whole \u00A3" + "\'s");
+				System.out.println("Enter amount in whole \u00A3\'s , between \u00A30 and \u00A3" + (int)costForFill + ", that you wish to fill up");
 								
 				while(!fillAmount.hasNextInt()){
 					System.out.println("That's not a number...");
@@ -125,7 +121,11 @@ public class GasStationSim{
 				
 				d = (double) fillAmount.nextInt();
 				
-			} while (d < 1.0d);
+			} while (d < 1.0d || d > costForFill);
+			
+			costForFill = d;
+			
+			startFilling((int)(costForFill/fuelType.getCostPerLitre()));
 		}
 	}
 	
@@ -134,6 +134,39 @@ public class GasStationSim{
 		FuelType[] fuelTypeArray = FuelType.values();
 		Random rand = new Random();
 		return fuelTypeArray[rand.nextInt(fuelTypeArray.length)];
+		
+	}
+	
+	private void startFilling(int amountToFill){
+		
+		for (int i = 0; i < amountToFill; i++){
+			vehicleTank.changeFuelInTank();
+			reservoirTank.changeFuelInTank();
+			
+			if (vehicleTank.getFuelInTank() % 5 == 0){
+				System.out.println("\nYour " + vehicleType.lowerCaseName() + " now has " + vehicleTank.getFuelInTank() + " litres of petrol \nContinuing to fill...");
+				try{
+					Thread.sleep(2000);
+				} catch (InterruptedException ie){
+					System.out.println("Pump malfunction....");
+					costForFill = (i+1) * fuelType.getCostPerLitre();
+					break;
+				}
+			}
+			
+			if (reservoirTank.getFuelInTank() <= 0){
+				System.out.println("Reservoir is now empty");
+				break;
+			}
+		}
+		
+		askForPayment();
+		
+	}
+	
+	private void askForPayment(){
+		
+		System.out.println("\nFilling finished. Please go to checkout and pay \u00A3" + df.format(costForFill) + ".");
 	}
 	
 }
