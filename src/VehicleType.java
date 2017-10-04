@@ -5,9 +5,9 @@ public enum VehicleType{
 	CAR(0), VAN(1), MOTORBIKE(2), LORRY(3);
 	
 	private int vehicleFuelCapacity;
-	private final int CAR_FUEL_CAPACITY = 65;
+	private final int CAR_FUEL_CAPACITY = 50;
 	private final int VAN_FUEL_CAPACITY = 80;
-	private final int MOTO_FUEL_CAPACITY = 13;
+	private final int MOTO_FUEL_CAPACITY = 15;
 	private final int LORRY_FUEL_CAPACITY = 250;
 	
 	private VehicleType(int vehicleFuelCapacity){
