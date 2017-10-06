@@ -6,8 +6,8 @@ import com.martin_bolton_macdonald.FuelType;
 
 public class VehicleTank extends Tank{
 
-	private final int FUEL_CHANGE_VALUE = 1;
-	private int emptyVolume;
+	private final double FUEL_CHANGE_VALUE = 0.01d;
+	private double emptyVolume;
 	
 	public VehicleTank(VehicleType vehicleType){
 		super(vehicleType);	
@@ -19,7 +19,7 @@ public class VehicleTank extends Tank{
 		setFuelInTank(FUEL_CHANGE_VALUE);
 	}
 	
-	public int getEmptyVolume(){
+	public double getEmptyVolume(){
 		return this.emptyVolume;
 	}
 	

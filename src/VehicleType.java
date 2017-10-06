@@ -4,11 +4,11 @@ public enum VehicleType{
 	
 	CAR(0), VAN(1), MOTORBIKE(2), LORRY(3);
 	
-	private int vehicleFuelCapacity;
-	private final int CAR_FUEL_CAPACITY = 50;
-	private final int VAN_FUEL_CAPACITY = 80;
-	private final int MOTO_FUEL_CAPACITY = 15;
-	private final int LORRY_FUEL_CAPACITY = 250;
+	private double vehicleFuelCapacity;
+	private final double CAR_FUEL_CAPACITY = 50.00d;
+	private final double VAN_FUEL_CAPACITY = 80.00d;
+	private final double MOTO_FUEL_CAPACITY = 15.00d;
+	private final double LORRY_FUEL_CAPACITY = 250.00d;
 	
 	private VehicleType(int vehicleFuelCapacity){
 		
@@ -32,7 +32,7 @@ public enum VehicleType{
 		
 	}
 	
-	public int getVehicleFuelCapacity(){
+	public double getVehicleFuelCapacity(){
 		return this.vehicleFuelCapacity;
 	}
 	

@@ -5,10 +5,10 @@ import java.util.Random;
 
 public abstract class Tank{
 	
-	private int tankFuelCapacity;
-	private int fuelInTank;
+	private double tankFuelCapacity;
+	private double fuelInTank;
 	
-	public Tank(int tankFuelCapacity){
+	public Tank(double tankFuelCapacity){
 		this.tankFuelCapacity = tankFuelCapacity;
 		initializeFuelInTank();
 	}
@@ -23,20 +23,20 @@ public abstract class Tank{
 		Random rand = new Random();
 		
 		do{
-			this.fuelInTank = rand.nextInt(this.tankFuelCapacity);
+			this.fuelInTank = rand.nextDouble() * this.tankFuelCapacity;
 		} while (this.fuelInTank == this.tankFuelCapacity);
 		
 	}
 	
-	public int getTankFuelCapacity(){
+	public double getTankFuelCapacity(){
 		return this.tankFuelCapacity;
 	}
 	
-	void setFuelInTank(int fuelVolumeChange){
+	void setFuelInTank(double fuelVolumeChange){
 		this.fuelInTank += fuelVolumeChange;
 	}
 	
-	public int getFuelInTank(){
+	public double getFuelInTank(){
 		return this.fuelInTank;
 	};
 	
