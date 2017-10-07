@@ -4,9 +4,9 @@ import com.martin_bolton_macdonald.Tank;
 
 public class ReservoirTank extends Tank{
 	
-	private final int FUEL_CHANGE_VALUE = -1;
+	private final double FUEL_CHANGE_VALUE = -0.01d;
 	
-	public ReservoirTank(int tankFuelCapacity){
+	public ReservoirTank(double tankFuelCapacity){
 		super(tankFuelCapacity);	
 	}
 

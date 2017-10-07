@@ -24,15 +24,18 @@ import java.awt.event.ActionListener;
 
 public class GasStationSim extends JFrame{
 	
-	private final int RESERVOIR_CAPACITY = 20000;
+	private final double RESERVOIR_CAPACITY = 10000.00d;
 	private VehicleType vehicleType;
 	private VehicleTank vehicleTank;
+	private FuelType fuelType;
+	private ReservoirTank reservoirTank;
 	private JButton bt1;
 	private double litres = 0.00d;
 	private double cost = 0.00d;
 	private JLabel litreLabel;
 	private JLabel costLabel;
-	private DecimalFormat df = new DecimalFormat("000.00");
+	private JLabel lblDescriptor;
+	private DecimalFormat df = new DecimalFormat("00.00");
 	
 	public GasStationSim(){
 		initComponents();
@@ -60,10 +63,10 @@ public class GasStationSim extends JFrame{
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
-		JLabel lblDescriptor = new JLabel("Waiting on vehicle....");
+		lblDescriptor = new JLabel("Waiting on vehicle....");
 		
-		litreLabel = new JLabel("000.00 ltr");
-		costLabel = new JLabel("£000.00");
+		litreLabel = new JLabel("00.00 ltr");
+		costLabel = new JLabel("\u00A300.00");
 		
 		bt1 = new JButton("Fill up");
 		ButtonModel bt1Model = bt1.getModel();
@@ -83,6 +86,18 @@ public class GasStationSim extends JFrame{
 		});
 		
 		JButton bt2 = new JButton("Finish");
+		ButtonModel bt2Model = bt2.getModel();
+		bt2Model.addChangeListener(new ChangeListener(){
+			
+			@Override
+			public void stateChanged(ChangeEvent e){
+				if (bt2Model.isPressed()){
+					if (cost > 0.99d || Math.abs(vehicleTank.getTankFuelCapacity() - vehicleTank.getFuelInTank()) < 0.01d) reset();
+					else lblDescriptor.setText("Minimum spend is \u00A31.00");
+				}
+			}
+			
+		});
 		
 		JPanel internalPanel = new JPanel();
 		internalPanel.setLayout(new GridLayout(1,2));
@@ -103,6 +118,7 @@ public class GasStationSim extends JFrame{
 		
 		pack();
 		createNewVehicle();
+		createNewReservoir();
 		
 	}
 	
@@ -112,12 +128,20 @@ public class GasStationSim extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e){
-				if (Math.abs(vehicleTank.getTankFuelCapacity() - vehicleTank.getFuelInTank()) > 0.01d){
+				if (Math.abs(vehicleTank.getTankFuelCapacity() - vehicleTank.getFuelInTank()) > 0.01d && reservoirTank.getFuelInTank() > 0.01d){
 					vehicleTank.changeFuelInTank();
+					reservoirTank.changeFuelInTank();
+					lblDescriptor.setText("Filling....click FINISH if complete!");
 					litres += 0.01d;
 					litreLabel.setText(df.format(litres) + " ltr");
-					cost += 0.013d;
+					cost += fuelType.getCostPerLitre() / 100;
 					costLabel.setText("\u00A3" + df.format(cost));
+				} else {
+					if(Math.abs(vehicleTank.getTankFuelCapacity() - vehicleTank.getFuelInTank()) < 0.01d){
+						lblDescriptor.setText("Your " + vehicleType.name().toLowerCase() + " is full. Please click FINISH and then proceed to checkout!");
+					} else if (reservoirTank.getFuelInTank() < 0.01d){
+						lblDescriptor.setText("The reservoir is empty....please click FINISH and then proceed to checkout!");
+					}
 				}
 			}
 			
@@ -134,7 +158,7 @@ public class GasStationSim extends JFrame{
 		vehicleTank = new VehicleTank(vehicleType);
 	
 		FuelType[] fuelTypeArray = FuelType.values();
-		FuelType fuelType = fuelTypeArray[rand.nextInt(fuelTypeArray.length)];
+		fuelType = fuelTypeArray[rand.nextInt(fuelTypeArray.length)];
 
 		updateLabelText(vehicleType, fuelType);
 		
@@ -145,12 +169,26 @@ public class GasStationSim extends JFrame{
 	
 	private void createNewReservoir(){
 		
+		reservoirTank = new ReservoirTank(RESERVOIR_CAPACITY);
+		System.out.println(reservoirTank.getFuelInTank());
 	
 	}
 	
 	private void updateLabelText(VehicleType vehicleType, FuelType fuelType){
 		
-		//lblDescriptor.setText("You are driving a " + vehicleType.name().toLowerCase() + " that takes " + fuelType.name().toLowerCase() + "... care to fill up?");
+		lblDescriptor.setText("You are driving a " + vehicleType.name().toLowerCase() + " that takes " + fuelType.name().toLowerCase() + "... care to fill up?");
+		
+	}
+	
+	private void reset(){
+		createNewVehicle();
+		litres = 0.00d;
+		cost = 0.00d;
+		litreLabel.setText("00.00 ltr");
+		costLabel.setText("\u00A300.00");
+		if (reservoirTank.getFuelInTank() < 0.01d){
+			createNewReservoir();
+		}
 		
 	}
 	
