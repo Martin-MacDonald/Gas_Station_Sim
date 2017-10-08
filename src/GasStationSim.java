@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import java.awt.EventQueue;
 import javax.swing.WindowConstants;
 import javax.swing.BoxLayout;
+import javax.swing.Box;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -21,6 +22,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Font;
 
 public class GasStationSim extends JFrame{
 	
@@ -51,24 +53,29 @@ public class GasStationSim extends JFrame{
 		});			
 		
 	}
-	
-	
+		
 	private void initComponents(){
-		
-
-		
+				
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setTitle("Gas Station Simulator");
-		
+				
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
+		Font lblFont = new Font("Serif", Font.BOLD, 30);
+		
 		lblDescriptor = new JLabel("Waiting on vehicle....");
+		lblDescriptor.setFont(lblFont);
 		
 		litreLabel = new JLabel("00.00 ltr");
+		litreLabel.setFont(lblFont);
 		costLabel = new JLabel("\u00A300.00");
+		costLabel.setFont(lblFont);
+		
+		Font btnFont = new Font("Serif", Font.ITALIC, 25);
 		
 		bt1 = new JButton("Fill up");
+		bt1.setFont(btnFont);
 		ButtonModel bt1Model = bt1.getModel();
 		bt1Model.addChangeListener(new ChangeListener(){
 			
@@ -86,6 +93,7 @@ public class GasStationSim extends JFrame{
 		});
 		
 		JButton bt2 = new JButton("Finish");
+		bt2.setFont(btnFont);
 		ButtonModel bt2Model = bt2.getModel();
 		bt2Model.addChangeListener(new ChangeListener(){
 			
@@ -110,13 +118,17 @@ public class GasStationSim extends JFrame{
 		
 		internalPanel.add(litreLabel);
 		internalPanel.add(costLabel);
+		mainPanel.add(Box.createVerticalStrut(30));
 		mainPanel.add(lblDescriptor);
 		mainPanel.add(internalPanel);
 		mainPanel.add(bt1);
+		mainPanel.add(Box.createVerticalStrut(30));
 		mainPanel.add(bt2);
+		mainPanel.add(Box.createVerticalStrut(30));
 		add(mainPanel);
 		
-		pack();
+		setSize(1000, 400);
+		
 		createNewVehicle();
 		createNewReservoir();
 		
